@@ -16,15 +16,29 @@ public class Main {
         BufferedImage img;
         try{
             img = ImageIO.read(Objects.requireNonNull(Main.class.getClassLoader().getResource(fileName)));
-            BufferedImage scaledBWImage = toScale(toBlackWhiteImage(img));
+            BufferedImage workingImage = repairImage(toScale(toBlackWhiteImage(img)));
             int charNumHor = (int) Math.round((double) img.getWidth()/glyphWidth);
             int charNumVer = (int) Math.round((double) img.getHeight()/glyphHeight);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    BufferedImage repairImage(BufferedImage repairedImage) throws IOException {
+        BufferedImage repairImage = new BufferedImage(repairedImage.getWidth() + glyphWidth - (repairedImage.getWidth() % glyphWidth),
+                (repairedImage.getHeight() + glyphHeight - (repairedImage.getHeight() % glyphHeight)), repairedImage.getType());
+        for (int i = 0; i < repairImage.getWidth(); i++){
+            for (int j = 0; j< repairImage.getHeight(); j++){
+                if(i > repairedImage.getWidth() -1 || j > repairedImage.getHeight() -1){
+                    repairImage.setRGB(i, j, Color.WHITE.getRGB());
+                }else {
+                    repairImage.setRGB(i, j, repairedImage.getRGB(i, j));
+                }
+            }
+        }
+        ImageIO.write(repairImage, "png", new File("repairBWimage.png"));
+        return repairedImage;
+    }
 
     BufferedImage toScale(BufferedImage imageToScale) throws IOException {
         int scaled = 2;
