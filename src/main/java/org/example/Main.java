@@ -16,7 +16,7 @@ public class Main {
         BufferedImage img;
         try{
             img = ImageIO.read(Objects.requireNonNull(Main.class.getClassLoader().getResource(fileName)));
-            BufferedImage workingImage = repairImage(toScale(toBlackWhiteImage(img)));
+            BufferedImage workingImage = repairImage(toScale(toBlackWhiteImage(img), 2));
             int charNumHor = (int) Math.round((double) img.getWidth()/glyphWidth);
             int charNumVer = (int) Math.round((double) img.getHeight()/glyphHeight);
         } catch (IOException e) {
@@ -36,17 +36,16 @@ public class Main {
                 }
             }
         }
-        ImageIO.write(repairImage, "png", new File("repairBWimage.png"));
+        ImageIO.write(repairImage, "png", new File("repairImage.png"));
         return repairedImage;
     }
 
-    BufferedImage toScale(BufferedImage imageToScale) throws IOException {
-        int scaled = 2;
-        BufferedImage scaledImage = new BufferedImage(imageToScale.getWidth()/scaled , imageToScale.getHeight()/scaled, imageToScale.getType());
+    BufferedImage toScale(BufferedImage imageToScale, int scaledBy) throws IOException {
+        BufferedImage scaledImage = new BufferedImage(imageToScale.getWidth()/scaledBy , imageToScale.getHeight()/scaledBy, imageToScale.getType());
         Graphics2D g2D = scaledImage.createGraphics();
-        g2D.drawImage(imageToScale, 0, 0, imageToScale.getWidth()/scaled, imageToScale.getHeight()/scaled, null);
+        g2D.drawImage(imageToScale, 0, 0, imageToScale.getWidth()/scaledBy, imageToScale.getHeight()/scaledBy, null);
         g2D.dispose();
-        ImageIO.write(scaledImage, "png", new File("scaledBW.png"));
+        ImageIO.write(scaledImage, "png", new File("scaledImage.png"));
         return scaledImage;
     }
 
@@ -66,11 +65,11 @@ public class Main {
                 bwImage.setRGB(i, j, new Color(color, color, color).getRGB());
             }
         }
-        ImageIO.write(bwImage ,"png" , new File("hehe.png"));
+        ImageIO.write(bwImage ,"png" , new File("blackWhiteImage.png"));
         return bwImage;
     }
 
     public static void main(String[] args) {
-        new Main().convert("sIg.png");
+        new Main().convert("sourceImage.png");
     }
 }
