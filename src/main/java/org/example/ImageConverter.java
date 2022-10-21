@@ -8,20 +8,14 @@ import java.util.Objects;
 
 public class ImageConverter {
 
-    private final int glyphWidth ;
-    private final int glyphHeight;
     private BufferedImage workingImage;
 
-    public ImageConverter(int glyphWidth, int glyphHeight) {
-        this.glyphHeight = glyphHeight;
-        this.glyphWidth = glyphWidth;
-    }
 
     public StringBuilder convertToASCII(String fileName, int scaledBy){
 
         try{
             BufferedImage img = ImageIO.read(Objects.requireNonNull(Main.class.getClassLoader().getResource(fileName)));
-            workingImage = repairImage(toScale(toNegativeImage(img), scaledBy));
+            workingImage = toScale(toNegativeImage(img), scaledBy);
             StringBuilder asciiText = new StringBuilder(workingImage.getWidth() * workingImage.getHeight());
             for (int j = 0; j < workingImage.getHeight(); j++){
                 if(!asciiText.isEmpty()){
@@ -65,21 +59,6 @@ public class ImageConverter {
         }
         return c;
 
-    }
-
-    private BufferedImage repairImage(BufferedImage repairedImage) throws IOException {
-        BufferedImage repairImage = new BufferedImage(repairedImage.getWidth() + glyphWidth - (repairedImage.getWidth() % glyphWidth),
-                (repairedImage.getHeight() + glyphHeight - (repairedImage.getHeight() % glyphHeight)), repairedImage.getType());
-        for (int i = 0; i < repairImage.getWidth(); i++){
-            for (int j = 0; j< repairImage.getHeight(); j++){
-                if(i > repairedImage.getWidth() -1 || j > repairedImage.getHeight() -1){
-                    repairImage.setRGB(i, j, Color.WHITE.getRGB());
-                }else {
-                    repairImage.setRGB(i, j, repairedImage.getRGB(i, j));
-                }
-            }
-        }
-        return repairedImage;
     }
 
     public BufferedImage toScale(BufferedImage imageToScale, int scaledBy) throws IOException {
